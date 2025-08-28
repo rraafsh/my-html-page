@@ -85,7 +85,6 @@
 </head>
 <body>
   <div class="card">
-    <!-- Make sure pic1.jpeg is uploaded to the same folder as this HTML -->
     <img src="./pic1.jpeg" alt="pic1" class="top-pic" id="topPic">
     <h2 class="question" id="question">Will you marry more than once, Hasib?</h2>
     <div class="button-area" id="btnArea">
@@ -93,7 +92,6 @@
       <button class="btn no-btn" id="noBtn">No</button>
     </div>
     <div class="result" id="result">
-      <!-- Make sure pic2.jpeg is uploaded to the same folder as this HTML -->
       <img src="./pic2.jpeg" alt="pic2" class="top-pic">
       ❤️ Rafa's goodboy ❤️
     </div>
@@ -107,17 +105,26 @@
   const question = document.getElementById("question");
   const topPic = document.getElementById("topPic");
 
-  // make the Yes button escape on hover
-  yesBtn.addEventListener("mouseenter", () => {
+  // Function to move Yes button randomly
+  function moveYesButton() {
     const maxX = btnArea.clientWidth - yesBtn.offsetWidth - 10;
     const maxY = btnArea.clientHeight - yesBtn.offsetHeight - 10;
     const randX = Math.floor(Math.random() * maxX);
     const randY = Math.floor(Math.random() * maxY);
     yesBtn.style.left = randX + "px";
     yesBtn.style.top = randY + "px";
+  }
+
+  // Desktop hover
+  yesBtn.addEventListener("mouseenter", moveYesButton);
+
+  // Mobile touch
+  yesBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // prevent immediate click
+    moveYesButton();
   });
 
-  // clicking No shows result
+  // Clicking No shows result
   noBtn.addEventListener("click", () => {
     btnArea.style.display = "none";
     result.style.display = "block";
@@ -125,7 +132,7 @@
     question.style.display = "none";
   });
 
-  // clicking Yes also shows result
+  // Clicking Yes also shows result (for those who tap instead of hovering)
   yesBtn.addEventListener("click", () => {
     btnArea.style.display = "none";
     result.style.display = "block";
