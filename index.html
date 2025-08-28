@@ -37,7 +37,7 @@
     background: #fff7fb;
     border-radius: 12px;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-    touch-action: none; /* prevent scrolling during touch */
+    touch-action: none; /* prevents scrolling during touch */
   }
 
   .btn {
@@ -106,7 +106,7 @@ const result = document.getElementById("result");
 const question = document.getElementById("question");
 const topPic = document.getElementById("topPic");
 
-// Function to move Yes button randomly inside container
+// Move Yes button randomly inside container
 function moveYesButton() {
   const maxX = btnArea.clientWidth - yesBtn.offsetWidth - 10;
   const maxY = btnArea.clientHeight - yesBtn.offsetHeight - 10;
@@ -114,7 +114,7 @@ function moveYesButton() {
   yesBtn.style.top = Math.random() * maxY + "px";
 }
 
-// Function to check pointer/finger proximity
+// Check pointer/finger proximity
 function checkProximity(e) {
   let x, y;
   if (e.touches) {
@@ -126,7 +126,7 @@ function checkProximity(e) {
   }
 
   const rect = yesBtn.getBoundingClientRect();
-  const padding = 80; // distance at which button moves
+  const padding = 80; // distance at which the button moves
 
   if (
     x >= rect.left - padding && x <= rect.right + padding &&
@@ -136,11 +136,19 @@ function checkProximity(e) {
   }
 }
 
-// Move Yes button whenever pointer/finger is near
+// Desktop hover
 btnArea.addEventListener("mousemove", checkProximity);
+
+// Mobile drag
 btnArea.addEventListener("touchmove", checkProximity, {passive:false});
 
-// Function to show result
+// Mobile tap: jitter button on direct tap to simulate escape
+yesBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // prevent immediate click
+  moveYesButton();
+});
+
+// Show result function
 function showResult() {
   btnArea.style.display = "none";
   result.style.display = "block";
@@ -148,9 +156,11 @@ function showResult() {
   question.style.display = "none";
 }
 
-// Click Yes or No to show result
+// Click or tap Yes after it moves (desktop) or No button
 yesBtn.addEventListener("click", showResult);
 noBtn.addEventListener("click", showResult);
 </script>
 </body>
 </html>
+
+
