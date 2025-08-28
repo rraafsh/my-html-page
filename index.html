@@ -33,7 +33,7 @@
     position: relative;
     width: 400px;
     height: 200px;
-    margin: 20px auto;
+    margin: 0 auto;
     background: #fff7fb;
     border-radius: 12px;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
@@ -41,12 +41,14 @@
 
   .btn {
     position: absolute;
-    padding: 16px 28px;
+    padding: 12px 22px;
     font-size: 18px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    transition: all 0.3s ease;
   }
 
   .yes-btn {
@@ -54,6 +56,7 @@
     color: #fff;
     left: 250px;
     top: 70px;
+    z-index: 2;
   }
 
   .no-btn {
@@ -63,14 +66,6 @@
     top: 70px;
   }
 
-  .top-pic {
-    width: 150px;
-    margin-bottom: 15px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .result {
     display: none;
     font-size: 26px;
@@ -78,88 +73,65 @@
     color: #ff4d6d;
     margin-top: 20px;
   }
+
+  .top-pic {
+    width: 150px;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>
 </head>
 <body>
-<div class="card">
-  <img src="pic1.jpeg" alt="pic1" class="top-pic" id="topPic">
-  <h2 class="question" id="question">Will you marry more than once, Hasib?</h2>
-  <div class="button-area" id="btnArea">
-    <button class="btn yes-btn" id="yesBtn">Yes</button>
-    <button class="btn no-btn" id="noBtn">No</button>
+  <div class="card">
+    <!-- Make sure pic1.jpeg is uploaded to the same folder as this HTML -->
+    <img src="./pic1.jpeg" alt="pic1" class="top-pic" id="topPic">
+    <h2 class="question" id="question">Will you marry more than once, Hasib?</h2>
+    <div class="button-area" id="btnArea">
+      <button class="btn yes-btn" id="yesBtn">Yes</button>
+      <button class="btn no-btn" id="noBtn">No</button>
+    </div>
+    <div class="result" id="result">
+      <!-- Make sure pic2.jpeg is uploaded to the same folder as this HTML -->
+      <img src="./pic2.jpeg" alt="pic2" class="top-pic">
+      ❤️ Rafa's goodboy ❤️
+    </div>
   </div>
-  <div class="result" id="result">
-    <img src="pic2.jpeg" alt="pic2" class="top-pic">
-    ❤️ Rafa's goodboy ❤️
-  </div>
-</div>
 
 <script>
-const yesBtn = document.getElementById("yesBtn");
-const btnArea = document.getElementById("btnArea");
-const noBtn = document.getElementById("noBtn");
-const result = document.getElementById("result");
-const question = document.getElementById("question");
-const topPic = document.getElementById("topPic");
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  const result = document.getElementById("result");
+  const btnArea = document.getElementById("btnArea");
+  const question = document.getElementById("question");
+  const topPic = document.getElementById("topPic");
 
-let mouseX = 0;
-let mouseY = 0;
-let isMoving = false;
+  // make the Yes button escape on hover
+  yesBtn.addEventListener("mouseenter", () => {
+    const maxX = btnArea.clientWidth - yesBtn.offsetWidth - 10;
+    const maxY = btnArea.clientHeight - yesBtn.offsetHeight - 10;
+    const randX = Math.floor(Math.random() * maxX);
+    const randY = Math.floor(Math.random() * maxY);
+    yesBtn.style.left = randX + "px";
+    yesBtn.style.top = randY + "px";
+  });
 
-// Track cursor position
-btnArea.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if (!isMoving) {
-    isMoving = true;
-    requestAnimationFrame(dodgeYesButton);
-  }
-});
+  // clicking No shows result
+  noBtn.addEventListener("click", () => {
+    btnArea.style.display = "none";
+    result.style.display = "block";
+    topPic.style.display = "none";
+    question.style.display = "none";
+  });
 
-// Move Yes button continuously
-function dodgeYesButton() {
-  const rect = yesBtn.getBoundingClientRect();
-  const padding = 120; // distance to trigger dodge
-
-  if (
-    mouseX >= rect.left - padding &&
-    mouseX <= rect.right + padding &&
-    mouseY >= rect.top - padding &&
-    mouseY <= rect.bottom + padding
-  ) {
-    const maxX = btnArea.clientWidth - yesBtn.offsetWidth;
-    const maxY = btnArea.clientHeight - yesBtn.offsetHeight;
-
-    // Avoid overlapping the No button
-    let newX, newY;
-    const noRect = noBtn.getBoundingClientRect();
-    do {
-      newX = Math.random() * maxX;
-      newY = Math.random() * maxY;
-    } while (
-      newX + yesBtn.offsetWidth > noRect.left &&
-      newX < noRect.right &&
-      newY + yesBtn.offsetHeight > noRect.top &&
-      newY < noRect.bottom
-    );
-
-    yesBtn.style.left = newX + "px";
-    yesBtn.style.top = newY + "px";
-  }
-
-  requestAnimationFrame(dodgeYesButton);
-}
-
-// Clicking Yes or No shows result
-function showResult() {
-  btnArea.style.display = "none";
-  result.style.display = "block";
-  topPic.style.display = "none";
-  question.style.display = "none";
-}
-
-yesBtn.addEventListener("click", showResult);
-noBtn.addEventListener("click", showResult);
+  // clicking Yes also shows result
+  yesBtn.addEventListener("click", () => {
+    btnArea.style.display = "none";
+    result.style.display = "block";
+    topPic.style.display = "none";
+    question.style.display = "none";
+  });
 </script>
 </body>
 </html>
