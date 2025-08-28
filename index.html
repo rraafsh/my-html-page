@@ -37,18 +37,19 @@
     background: #fff7fb;
     border-radius: 12px;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+    touch-action: none; /* prevent scrolling during touch */
   }
 
   .btn {
     position: absolute;
-    padding: 12px 22px;
-    font-size: 18px;
+    padding: 16px 28px;
+    font-size: 20px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     box-shadow: 0 6px 14px rgba(0,0,0,0.1);
     white-space: nowrap;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
 
   .yes-btn {
@@ -84,61 +85,72 @@
 </style>
 </head>
 <body>
-  <div class="card">
-    <img src="./pic1.jpeg" alt="pic1" class="top-pic" id="topPic">
-    <h2 class="question" id="question">Will you marry more than once, Hasib?</h2>
-    <div class="button-area" id="btnArea">
-      <button class="btn yes-btn" id="yesBtn">Yes</button>
-      <button class="btn no-btn" id="noBtn">No</button>
-    </div>
-    <div class="result" id="result">
-      <img src="./pic2.jpeg" alt="pic2" class="top-pic">
-      ❤️ Rafa's goodboy ❤️
-    </div>
+<div class="card">
+  <img src="./pic1.jpeg" alt="pic1" class="top-pic" id="topPic">
+  <h2 class="question" id="question">Will you marry more than once, Hasib?</h2>
+  <div class="button-area" id="btnArea">
+    <button class="btn yes-btn" id="yesBtn">Yes</button>
+    <button class="btn no-btn" id="noBtn">No</button>
   </div>
+  <div class="result" id="result">
+    <img src="./pic2.jpeg" alt="pic2" class="top-pic">
+    ❤️ Rafa's goodboy ❤️
+  </div>
+</div>
 
 <script>
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn = document.getElementById("noBtn");
-  const result = document.getElementById("result");
-  const btnArea = document.getElementById("btnArea");
-  const question = document.getElementById("question");
-  const topPic = document.getElementById("topPic");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const btnArea = document.getElementById("btnArea");
+const result = document.getElementById("result");
+const question = document.getElementById("question");
+const topPic = document.getElementById("topPic");
 
-  // Function to move Yes button randomly
-  function moveYesButton() {
-    const maxX = btnArea.clientWidth - yesBtn.offsetWidth - 10;
-    const maxY = btnArea.clientHeight - yesBtn.offsetHeight - 10;
-    const randX = Math.floor(Math.random() * maxX);
-    const randY = Math.floor(Math.random() * maxY);
-    yesBtn.style.left = randX + "px";
-    yesBtn.style.top = randY + "px";
+// Function to move Yes button randomly inside container
+function moveYesButton() {
+  const maxX = btnArea.clientWidth - yesBtn.offsetWidth - 10;
+  const maxY = btnArea.clientHeight - yesBtn.offsetHeight - 10;
+  yesBtn.style.left = Math.random() * maxX + "px";
+  yesBtn.style.top = Math.random() * maxY + "px";
+}
+
+// Function to check pointer/finger proximity
+function checkProximity(e) {
+  let x, y;
+  if (e.touches) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
+  } else {
+    x = e.clientX;
+    y = e.clientY;
   }
 
-  // Desktop hover
-  yesBtn.addEventListener("mouseenter", moveYesButton);
+  const rect = yesBtn.getBoundingClientRect();
+  const padding = 80; // distance at which button moves
 
-  // Mobile touch
-  yesBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // prevent immediate click
+  if (
+    x >= rect.left - padding && x <= rect.right + padding &&
+    y >= rect.top - padding && y <= rect.bottom + padding
+  ) {
     moveYesButton();
-  });
+  }
+}
 
-  // Clicking No shows result
-  noBtn.addEventListener("click", () => {
-    btnArea.style.display = "none";
-    result.style.display = "block";
-    topPic.style.display = "none";
-    question.style.display = "none";
-  });
+// Move Yes button whenever pointer/finger is near
+btnArea.addEventListener("mousemove", checkProximity);
+btnArea.addEventListener("touchmove", checkProximity, {passive:false});
 
-  // Clicking Yes also shows result (for those who tap instead of hovering)
-  yesBtn.addEventListener("click", () => {
-    btnArea.style.display = "none";
-    result.style.display = "block";
-    topPic.style.display = "none";
-    question.style.display = "none";
-  });
+// Function to show result
+function showResult() {
+  btnArea.style.display = "none";
+  result.style.display = "block";
+  topPic.style.display = "none";
+  question.style.display = "none";
+}
+
+// Click Yes or No to show result
+yesBtn.addEventListener("click", showResult);
+noBtn.addEventListener("click", showResult);
 </script>
 </body>
 </html>
