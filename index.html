@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Super Fast Playful Yes Button</title>
+<title>Impossible Yes Button</title>
 <style>
   body {
     margin: 0;
@@ -40,7 +40,6 @@
     border-radius: 10px;
     cursor: pointer;
     box-shadow: 0 6px 14px rgba(0,0,0,0.1);
-    transition: all 0.02s ease; /* ultra fast movement */
   }
 
   .yes-btn {
@@ -71,27 +70,54 @@
 const yesBtn = document.getElementById("yesBtn");
 const btnArea = document.getElementById("btnArea");
 
-// Move Yes button quickly
-function moveYesButton() {
-  const maxX = btnArea.clientWidth - yesBtn.offsetWidth;
-  const maxY = btnArea.clientHeight - yesBtn.offsetHeight;
-  yesBtn.style.left = Math.random() * maxX + "px";
-  yesBtn.style.top = Math.random() * maxY + "px";
-}
+let mouseX = 0;
+let mouseY = 0;
+let isMoving = false;
 
-// Dodge cursor when it comes close
+// Track cursor position
 btnArea.addEventListener("mousemove", (e) => {
-  const rect = yesBtn.getBoundingClientRect();
-  const padding = 150; // reacts earlier
-  if (
-    e.clientX >= rect.left - padding &&
-    e.clientX <= rect.right + padding &&
-    e.clientY >= rect.top - padding &&
-    e.clientY <= rect.bottom + padding
-  ) {
-    moveYesButton();
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  if (!isMoving) {
+    isMoving = true;
+    requestAnimationFrame(dodgeYesButton);
   }
 });
+
+// Function to move Yes button continuously
+function dodgeYesButton() {
+  const rect = yesBtn.getBoundingClientRect();
+  const padding = 120; // distance to trigger dodge
+
+  if (
+    mouseX >= rect.left - padding &&
+    mouseX <= rect.right + padding &&
+    mouseY >= rect.top - padding &&
+    mouseY <= rect.bottom + padding
+  ) {
+    const maxX = btnArea.clientWidth - yesBtn.offsetWidth;
+    const maxY = btnArea.clientHeight - yesBtn.offsetHeight;
+
+    // Pick new random position avoiding overlap with No button
+    let newX, newY;
+    const noBtnRect = document.getElementById("noBtn").getBoundingClientRect();
+    do {
+      newX = Math.random() * maxX;
+      newY = Math.random() * maxY;
+    } while (
+      newX + yesBtn.offsetWidth > noBtnRect.left &&
+      newX < noBtnRect.right &&
+      newY + yesBtn.offsetHeight > noBtnRect.top &&
+      newY < noBtnRect.bottom
+    );
+
+    yesBtn.style.left = newX + "px";
+    yesBtn.style.top = newY + "px";
+  }
+
+  requestAnimationFrame(dodgeYesButton);
+}
 </script>
 </body>
 </html>
+
